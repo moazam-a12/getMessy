@@ -1,0 +1,288 @@
+﻿@model Menu
+
+@{
+    ViewBag.Title = "Edit Menu Item";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+
+    <partial name="_TopNavbar" />
+    <partial name="_SideDrawer" />
+
+    <!-- Main Container -->
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden pt-20">
+
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900">
+                            Edit Menu Item
+                        </h1>
+                        <p class="text-gray-600 mt-2 text-lg">Update existing menu item details</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Form Area -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-2xl mx-auto">
+
+                    <!-- Error Message -->
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="mb-8 p-6 bg-gradient-to-r bg-red-50 border border-red-500/30 rounded-lg flex items-center shadow-sm">
+                            <i class="fas fa-exclamation-circle text-red-400 text-4xl mr-6"></i>
+                            <span class="text-red-700 text-xl font-medium">@ViewBag.Error</span>
+                        </div>
+                    }
+
+                    <!-- Form Card -->
+                    <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+
+                        <form id="menuForm" method="post" asp-action="Edit" class="space-y-8">
+
+                            <!-- Hidden ID -->
+                            <input type="hidden" name="Id" value="@Model.Id" />
+
+                            <!-- Item Name -->
+                            <div>
+                                <label for="name" class="block text-lg font-semibold text-gray-600 mb-3">
+                                    Item Name <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-utensils text-xl text-gray-700"></i>
+                                    </div>
+                                    <input type="text" id="name" name="Name" value="@Model.Name" placeholder="e.g., Chicken Biryani, Tea, Coffee"
+                                           class="w-full bg-white border border-gray-200 rounded-md pl-10 pr-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition">
+                                </div>
+                                <span id="nameError" class="text-red-400 text-sm mt-2 hidden"></span>
+                            </div>
+
+                            <!-- Price -->
+                            <div>
+                                <label for="price" class="block text-lg font-semibold text-gray-600 mb-3">
+                                    Price (Rs) <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-rupee-sign text-xl text-gray-700"></i>
+                                    </div>
+                                    <input type="number" id="price" name="Price" value="@Model.Price" placeholder="0.00" step="0.01" min="0"
+                                           class="w-full bg-white border border-gray-200 rounded-md pl-10 pr-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition">
+                                </div>
+                                <span id="priceError" class="text-red-400 text-sm mt-2 hidden"></span>
+                            </div>
+
+                            <!-- Date -->
+                            <div>
+                                <label for="date" class="block text-lg font-semibold text-gray-600 mb-3">
+                                    Date <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-calendar-alt text-xl text-gray-700"></i>
+                                    </div>
+                                    <input type="date" id="date" name="Date" value="@Model.Date.ToString("yyyy-MM-dd")"
+                                           class="w-full bg-white border border-gray-200 rounded-md pl-10 pr-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition">
+                                </div>
+                                <span id="dateError" class="text-red-400 text-sm mt-2 hidden"></span>
+                            </div>
+
+                            <!-- Item Type -->
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-600 mb-4">
+                                    Item Type <span class="text-red-400">*</span>
+                                </label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <label class="flex items-center space-x-4 cursor-pointer p-4 bg-white rounded-md border border-gray-200 hover:shadow-sm transition @(Model.IsFood ? "ring-2 ring-amber-200" : "")">
+                                        <input type="radio" name="IsFood" value="true" @(Model.IsFood ? "checked" : "")
+                                               class="w-5 h-5 text-cyan-500 border-gray-300 focus:ring-cyan-500">
+                                        <div>
+                                            <p class="text-xl font-medium text-gray-900">Food</p>
+                                            <p class="text-sm text-gray-600 mt-1">Optional – Billed only if attended</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center space-x-4 cursor-pointer p-4 bg-white rounded-md border border-gray-200 hover:shadow-sm transition @(!Model.IsFood ? "ring-2 ring-emerald-200" : "")">
+                                        <input type="radio" name="IsFood" value="false" @(!Model.IsFood ? "checked" : "")
+                                               class="w-5 h-5 text-cyan-500 border-gray-300 focus:ring-cyan-500">
+                                        <div>
+                                            <p class="text-xl font-medium text-gray-900">Drink</p>
+                                            <p class="text-sm text-gray-600 mt-1">Mandatory – Always billed daily</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex space-x-6 pt-6">
+                                <button type="submit"
+                                        class="flex-1 bg-green-600 text-white py-5 rounded-lg font-bold text-xl hover:bg-green-700 transition-all duration-300 shadow-sm flex items-center justify-center">
+                                    <i class="fas fa-save mr-3"></i>
+                                    Update Menu Item
+                                </button>
+
+                                <a href="/AdminMenu/Index"
+                                   class="flex-1 bg-gray-700/50 text-gray-700 py-5 rounded-lg font-bold text-xl hover:bg-gray-600/50 transition flex items-center justify-center border border-gray-600/50">
+                                    <i class="fas fa-arrow-left mr-3"></i>
+                                    Cancel
+                                </a>
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Client-Side Validation -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Set minimum date to today
+            var today = new Date().toISOString().split('T')[0];
+            $('#date').attr('min', today);
+
+            function hideError(field) {
+                $('#' + field + 'Error').addClass('hidden');
+                $('#' + field).removeClass('border-red-500');
+            }
+
+            function showError(field, message) {
+                $('#' + field + 'Error').text(message).removeClass('hidden');
+                $('#' + field).addClass('border-red-500');
+            }
+
+            $('#name').on('blur', function() {
+                var value = $(this).val().trim();
+                if (value === '') {
+                    showError('name', 'Item name is required');
+                } else if (value.length < 3) {
+                    showError('name', 'Item name must be at least 3 characters');
+                } else {
+                    hideError('name');
+                }
+            });
+
+            $('#price').on('blur', function() {
+                var value = parseFloat($(this).val());
+                if (isNaN(value) || $(this).val() === '') {
+                    showError('price', 'Price is required');
+                } else if (value <= 0) {
+                    showError('price', 'Price must be greater than 0');
+                } else if (value > 10000) {
+                    showError('price', 'Price seems too high. Please verify.');
+                } else {
+                    hideError('price');
+                }
+            });
+
+            $('#date').on('blur', function() {
+                var value = $(this).val();
+                var selectedDate = new Date(value);
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (value === '') {
+                    showError('date', 'Date is required');
+                } else if (selectedDate < today) {
+                    showError('date', 'Date cannot be in the past');
+                } else {
+                    hideError('date');
+                }
+            });
+
+            $('#name, #price, #date').on('focus', function() {
+                var fieldId = $(this).attr('id');
+                hideError(fieldId);
+            });
+
+            $('#menuForm').on('submit', function(e) {
+                var isValid = true;
+
+                var name = $('#name').val().trim();
+                if (name === '') {
+                    showError('name', 'Item name is required');
+                    isValid = false;
+                } else if (name.length < 3) {
+                    showError('name', 'Item name must be at least 3 characters');
+                    isValid = false;
+                } else {
+                    hideError('name');
+                }
+
+                var price = parseFloat($('#price').val());
+                if (isNaN(price) || $('#price').val() === '') {
+                    showError('price', 'Price is required');
+                    isValid = false;
+                } else if (price <= 0) {
+                    showError('price', 'Price must be greater than 0');
+                    isValid = false;
+                } else if (price > 10000) {
+                    showError('price', 'Price seems too high. Please verify.');
+                    isValid = false;
+                } else {
+                    hideError('price');
+                }
+
+                var dateValue = $('#date').val();
+                var selectedDate = new Date(dateValue);
+                var today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (dateValue === '') {
+                    showError('date', 'Date is required');
+                    isValid = false;
+                } else if (selectedDate < today) {
+                    showError('date', 'Date cannot be in the past');
+                    isValid = false;
+                } else {
+                    hideError('date');
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    $('html, body').animate({
+                        scrollTop: $('.border-red-500').first().offset().top - 150
+                    }, 500);
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

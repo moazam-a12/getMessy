@@ -1,0 +1,136 @@
+@* Top navigation bar with clean navbar links and user menu *@
+@using System.Security.Claims;
+@{
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
+    var isAdmin = userRole.ToLower() == "admin";
+    var currentPath = Context.Request.Path.Value ?? "";
+
+    // Prefer a FullName or name claim for display, fall back to email if necessary
+    var displayName = User.FindFirst("FullName")?.Value
+                      ?? User.FindFirst(ClaimTypes.Name)?.Value
+                      ?? User.FindFirst("name")?.Value
+                      ?? User.FindFirst(ClaimTypes.Email)?.Value
+                      ?? "User";
+
+    var displayEmail = User.FindFirst(ClaimTypes.Email)?.Value
+                       ?? User.FindFirst("email")?.Value
+                       ?? string.Empty;
+}
+
+<div class="w-full bg-white border-b border-gray-200 fixed z-40 top-0">
+    <style>
+        /* Prevent small layout shifts when scrollbars appear/disappear */
+        html { scrollbar-gutter: stable; }
+        /* Ensure drawer and overlay are hidden before Tailwind CSS/JS loads */
+        #sideDrawer { transform: translateX(-100%); }
+        #drawerOverlay { display: none; }
+    </style>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-16 flex items-center justify-between">
+            <!-- Left: Logo + Dashboard Label -->
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center ring-1 ring-blue-100">
+                        <i class="fas fa-utensils text-white text-sm"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-sm font-semibold text-gray-900">Mess</h1>
+                        <p class="text-xs text-gray-500">@(isAdmin ? "Admin" : "User")</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center: Desktop Navigation Links -->
+            <nav class="hidden lg:flex items-center gap-1">
+                <a href="@(isAdmin ? "/Admin/Dashboard" : "/UserMenu/Home")" 
+                   class="px-4 py-2 rounded-md text-sm font-medium @(currentPath.Contains(isAdmin ? "/Admin/Dashboard" : "/UserMenu/Home") ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100")">
+                    @(isAdmin ? "Dashboard" : "Home")
+                </a>
+                <a href="@(isAdmin ? "/Admin/AllBills" : "/UserBill/Index")" 
+                   class="px-4 py-2 rounded-md text-sm font-medium @(currentPath.Contains(isAdmin ? "/Admin/AllBills" : "/UserBill") ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100")">
+                    Bill History
+                </a>
+                <a href="@(isAdmin ? "/AdminAttendance/Index" : "/UserMenu/AttendanceHistory")" 
+                   class="px-4 py-2 rounded-md text-sm font-medium @(currentPath.Contains(isAdmin ? "/AdminAttendance" : "/AttendanceHistory") ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100")">
+                    Attendance
+                </a>
+
+                @if(isAdmin){
+                    <a href="/AdminMenu/Index" class="px-4 py-2 rounded-md text-sm font-medium @(currentPath.Contains("/AdminMenu") ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100")">
+                        Manage Menu
+                    </a>
+                    <a href="/AdminUser/Index" class="px-4 py-2 rounded-md text-sm font-medium @(currentPath.Contains("/AdminUser") ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100")">
+                        Manage Users
+                    </a>
+                    <a href="/AdminMenu/Add" class="px-4 py-2 rounded-md text-sm font-medium @(currentPath.Contains("/AdminMenu/Add") ? "text-blue-600 bg-blue-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100")">
+                        Add Menu
+                    </a>
+                }
+            </nav>
+
+            <!-- Right: Menu Button + Account -->
+            <div class="flex items-center gap-4">
+                <!-- Mobile menu toggle -->
+                <button id="menuToggle" class="p-2 rounded-md hover:bg-gray-100 focus:outline-none lg:hidden" aria-label="Open menu">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+
+                <!-- Account dropdown -->
+                <div class="relative">
+                    <button id="userMenuToggle" class="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 focus:outline-none">
+                        <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-base text-blue-600 font-semibold">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-sm font-semibold text-gray-900 truncate">@displayName</p>
+                            <p class="text-xs text-gray-500 truncate">@displayEmail</p>
+                        </div>
+                    </button>
+                    <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg py-2 z-50">
+                        <a href="@Url.Action("Logout", "Login")" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 font-medium">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Log out
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const menuToggle = document.getElementById('menuToggle');
+        const sideDrawer = document.getElementById('sideDrawer');
+        const overlay = document.getElementById('drawerOverlay');
+        
+        if(menuToggle && sideDrawer){
+            menuToggle.addEventListener('click', ()=>{
+                sideDrawer.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            });
+        }
+        
+        const userToggle = document.getElementById('userMenuToggle');
+        const userMenu = document.getElementById('userMenu');
+        if(userToggle && userMenu){
+            userToggle.addEventListener('click', (e)=>{ 
+                e.stopPropagation(); 
+                userMenu.classList.toggle('hidden'); 
+            });
+            document.addEventListener('click', (e)=>{
+                if(!userToggle.contains(e.target) && !userMenu.contains(e.target)) {
+                    userMenu.classList.add('hidden');
+                }
+            });
+        }
+        
+        if(overlay && sideDrawer){
+            overlay.addEventListener('click', ()=>{ 
+                sideDrawer.classList.add('-translate-x-full'); 
+                overlay.classList.add('hidden'); 
+            });
+        }
+    })();
+</script>

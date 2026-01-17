@@ -1,0 +1,50 @@
+@* Mobile-only side drawer for navigation *@
+@using System.Security.Claims;
+@{
+    var userRole = User.FindFirst(ClaimTypes.Role)?.Value ?? "User";
+    var isAdmin = userRole.ToLower() == "admin";
+}
+
+<div id="drawerOverlay" class="hidden fixed inset-0 bg-black/30 z-30" style="display: none;" aria-hidden="true"></div>
+<aside id="sideDrawer" class="fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 transform -translate-x-full transition-transform duration-300 z-40 pt-20 overflow-y-auto" style="transform: translateX(-100%);" aria-hidden="true">
+    <nav class="space-y-1 px-4 py-6">
+        <a href="@(isAdmin ? "/Admin/Dashboard" : "/UserMenu/Home")" 
+           class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg font-medium text-sm transition">
+            <i class="fas fa-home text-base"></i>
+            <span>Home</span>
+        </a>
+
+        <a href="@(isAdmin ? "/Admin/AllBills" : "/UserBill/Index")" 
+           class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg font-medium text-sm transition">
+            <i class="fas fa-file-invoice-dollar text-base"></i>
+            <span>Bill History</span>
+        </a>
+
+        <a href="@(isAdmin ? "/AdminAttendance/Index" : "/UserMenu/AttendanceHistory")" 
+           class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg font-medium text-sm transition">
+            <i class="fas fa-calendar-check text-base"></i>
+            <span>Attendance</span>
+        </a>
+
+        @if(isAdmin)
+        {
+            <div class="pt-4 mt-4 border-t border-gray-200">
+                <p class="px-4 py-2 text-xs uppercase text-gray-500 font-semibold tracking-wide">Admin Only</p>
+                <a href="/AdminMenu/Index" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg font-medium text-sm transition">
+                    <i class="fas fa-utensils text-base"></i>
+                    <span>Manage Menu</span>
+                </a>
+
+                <a href="/AdminMenu/Add" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg font-medium text-sm transition">
+                    <i class="fas fa-plus text-base"></i>
+                    <span>Add Menu</span>
+                </a>
+
+                <a href="/AdminUser/Index" class="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-700 rounded-lg font-medium text-sm transition">
+                    <i class="fas fa-user-friends text-base"></i>
+                    <span>Manage Users</span>
+                </a>
+            </div>
+        }
+    </nav>
+</aside>

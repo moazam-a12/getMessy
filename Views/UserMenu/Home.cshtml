@@ -1,0 +1,282 @@
+﻿@model List<Menu>
+
+@{
+    ViewBag.Title = "User Home";
+    var attended = ViewBag.UserAttendance as List<int>;
+    var recentBills = ViewBag.RecentBills as List<Bill>;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+
+    <partial name="_TopNavbar" />
+    <partial name="_SideDrawer" />
+
+    <!-- Main Content -->
+    <div class="pt-16">
+
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900">
+                            Hi, @ViewBag.Username
+                        </h1>
+                        <p class="text-gray-600 mt-2 text-lg">Your mess overview for today</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto p-8">
+
+                <!-- Welcome Message -->
+                @if (ViewBag.WelcomeMessage != null)
+                {
+                    <div class="mb-8 p-6 bg-green-50 border border-green-200 rounded-lg flex items-center gap-4">
+                        <i class="fas fa-check-circle text-green-600 text-2xl"></i>
+                        <span class="text-sm font-medium text-green-700">@ViewBag.WelcomeMessage</span>
+                    </div>
+                }
+
+                <!-- Today's Menu Section -->
+                <div class="mb-12">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-3xl font-bold text-gray-900">
+                            Today's Menu
+                        </h2>
+                        <span class="text-gray-600 text-lg">@DateTime.Now.ToString("MMMM dd, yyyy")</span>
+                    </div>
+
+                    @if (Model == null || Model.Count == 0)
+                    {
+                        <div class="bg-gray-50 rounded-lg p-16 text-center border border-amber-500/30 shadow-sm">
+                            <i class="fas fa-utensils text-8xl text-gray-600 mb-8"></i>
+                            <h3 class="text-3xl font-bold text-gray-700 mb-4">No Menu Available Today</h3>
+                            <p class="text-gray-600 text-lg">Please check back later or contact the admin</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="bg-gray-50 rounded-lg shadow-sm overflow-hidden border border-gray-200">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Item</th>
+                                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Type</th>
+                                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Price</th>
+                                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach (var item in Model)
+                                        {
+                                            var isAttended = attended != null && attended.Contains(item.Id);
+                                            <tr class="hover:bg-gray-50 transition-all duration-200">
+                                                <td class="px-4 py-3">
+                                                    <div class="flex items-center gap-3">
+                                                        <i class="@(item.IsFood ? "fas fa-hamburger" : "fas fa-mug-hot") text-lg text-gray-600"></i>
+                                                        <span class="text-sm font-medium text-gray-900">@item.Name</span>
+                                                    </div>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium @(item.IsFood ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800")">
+                                                        @(item.IsFood ? "Food" : "Drink")
+                                                    </span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <span class="text-sm font-medium text-gray-900">Rs @item.Price.ToString("N2")</span>
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    @if (isAttended)
+                                                    {
+                                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                            <i class="fas fa-check mr-1"></i> Attended
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-200 text-gray-700">
+                                                            <i class="fas fa-clock mr-1"></i> Pending
+                                                        </span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Info Note -->
+                        <div class="mt-6 p-6 bg-gradient-to-r bg-white border border-gray-200 rounded-lg flex items-center shadow-sm">
+                            <i class="fas fa-info-circle text-gray-700 text-4xl mr-6"></i>
+                            <div>
+                                <p class="text-xl font-medium text-gray-600">Attendance Note</p>
+                                <p class="text-gray-700 mt-1">Attendance is marked by the admin only. You can view your current status above.</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Billing Summary -->
+                <div class="mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-8">
+                        Your Billing Summary
+                    </h2>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                        <div class="bg-red-50 rounded-lg p-6 shadow-sm border border-red-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-red-800 text-sm font-medium uppercase">Total Unpaid</p>
+                                    <p class="text-2xl font-semibold mt-1 text-red-900">Rs @ViewBag.TotalUnpaid.ToString("N2")</p>
+                                </div>
+                                <svg class="w-10 h-10 text-red-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.72-1.36 3.486 0l5.516 9.808A1.75 1.75 0 0116.516 16H3.484a1.75 1.75 0 01-1.743-2.093L8.257 3.1zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-2a1 1 0 01-1-1V7a1 1 0 012 0v3a1 1 0 01-1 1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="bg-emerald-50 rounded-lg p-6 shadow-sm border border-emerald-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-emerald-800 text-sm font-medium uppercase">Total Paid</p>
+                                    <p class="text-2xl font-semibold mt-1 text-emerald-900">Rs @ViewBag.TotalPaid.ToString("N2")</p>
+                                </div>
+                                <svg class="w-10 h-10 text-emerald-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 rounded-lg p-6 shadow-sm border border-blue-200">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-blue-800 text-sm font-medium uppercase">Grand Total</p>
+                                    <p class="text-2xl font-semibold mt-1 text-blue-900">Rs @ViewBag.GrandTotal.ToString("N2")</p>
+                                </div>
+                                <svg class="w-10 h-10 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 7a2 2 0 012-2h12a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V7zm4 1a1 1 0 100-2 1 1 0 000 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="bg-gray-50 rounded-lg p-8 shadow-sm border border-gray-200">
+                            <h3 class="text-2xl font-bold text-gray-600 mb-6">Current Month</h3>
+                            <div class="space-y-5 text-lg">
+                                <div class="flex justify-between"><span class="text-gray-700">Total:</span><span class="font-semibold text-gray-900">Rs @ViewBag.CurrentMonthTotal.ToString("N2")</span></div>
+                                <div class="flex justify-between"><span class="text-gray-700">Paid:</span><span class="font-bold text-emerald-300">Rs @ViewBag.CurrentMonthPaid.ToString("N2")</span></div>
+                                <div class="flex justify-between"><span class="text-gray-700">Unpaid:</span><span class="font-bold text-rose-300">Rs @ViewBag.CurrentMonthUnpaid.ToString("N2")</span></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-lg p-8 shadow-sm border border-gray-200">
+                            <h3 class="text-2xl font-bold text-gray-600 mb-6">Previous Month</h3>
+                            <div class="space-y-5 text-lg">
+                                <div class="flex justify-between"><span class="text-gray-700">Total:</span><span class="font-semibold text-gray-900">Rs @ViewBag.PreviousMonthTotal.ToString("N2")</span></div>
+                                <div class="flex justify-between"><span class="text-gray-700">Paid:</span><span class="font-bold text-emerald-300">Rs @ViewBag.PreviousMonthPaid.ToString("N2")</span></div>
+                                <div class="flex justify-between"><span class="text-gray-700">Unpaid:</span><span class="font-bold text-rose-300">Rs @ViewBag.PreviousMonthUnpaid.ToString("N2")</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Bills -->
+                @if (recentBills != null && recentBills.Count > 0)
+                {
+                    <div class="mb-12">
+                        <h2 class="text-3xl font-bold text-gray-900 mb-6">
+                            Recent Bills
+                        </h2>
+                        <div class="bg-gray-50 rounded-lg shadow-sm overflow-hidden border border-gray-200">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-100">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase">Date</th>
+                                            <th class="px-4 py-3 text-right text-xs font-semibold text-gray-700 uppercase">Amount</th>
+                                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Status</th>
+                                            <th class="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach (var bill in recentBills)
+                                        {
+                                            <tr class="hover:bg-gray-100 transition-all duration-200">
+                                                <td class="px-4 py-3 text-sm text-gray-700">@bill.Date.ToString("MMM dd, yyyy")</td>
+                                                <td class="px-4 py-3 text-right text-sm font-semibold text-gray-900">Rs @bill.Amount.ToString("N2")</td>
+                                                <td class="px-4 py-3 text-center">
+                                                    @if (bill.Paid)
+                                                    {
+                                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                            <i class="fas fa-check mr-1"></i> Paid
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-red-100 text-red-800">
+                                                            <i class="fas fa-times mr-1"></i> Unpaid
+                                                        </span>
+                                                    }
+                                                </td>
+                                                <td class="px-4 py-3 text-center">
+                                                    <div class="flex justify-center gap-2">
+                                                        <a href="@Url.Action("Details", "UserBill", new { id = bill.Id })"
+                                                           class="bg-gray-900 text-white px-3 py-1 rounded text-xs hover:bg-gray-800 transition shadow-sm flex items-center font-medium">
+                                                            <i class="fas fa-eye mr-1"></i> View
+                                                        </a>
+                                                        @if (!bill.Paid)
+                                                        {
+                                                            <form method="post" asp-controller="Payment" asp-action="CreateCheckoutSession" asp-route-billId="@bill.Id" class="inline">
+                                                                <button type="submit"
+                                                                        class="bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700 transition shadow-sm flex items-center font-medium">
+                                                                    <i class="fas fa-credit-card mr-1"></i> Pay
+                                                                </button>
+                                                            </form>
+                                                        }
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <a href="@Url.Action("BillHistory", "UserMenu")"
+                       class="inline-flex items-center px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800 transition-all duration-300 shadow-sm text-sm font-medium">
+                        <i class="fas fa-file-invoice-dollar mr-2"></i>
+                        View Bills
+                    </a>
+
+                    <a href="@Url.Action("AttendanceHistory", "UserMenu")"
+                       class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all duration-300 shadow-sm text-sm font-medium">
+                        <i class="fas fa-calendar-check mr-2"></i>
+                        Attendance
+                    </a>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+</body>
+</html>
+</html>

@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "User Home";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <title>User Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-white" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+
+    <!-- Navigation Bar -->
+    <nav class="border-b border-gray-200 sticky top-0 bg-white/95 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <span class="text-lg font-semibold text-gray-900">Mess Manager</span>
+            </div>
+            <a href="@Url.Action("Logout", "Login")"
+               class="px-4 py-2 bg-gray-900 text-white rounded-lg font-medium text-sm hover:bg-black transition-colors">
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-6 py-12">
+        
+        <!-- Welcome Section -->
+        <div class="mb-12">
+            <h1 class="text-4xl font-semibold text-gray-900 mb-2">Hi, @ViewBag.Username</h1>
+            <p class="text-gray-500">Manage your account and bills</p>
+        </div>
+
+        <!-- Account Info Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
+            
+            <!-- Email Card -->
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <p class="text-sm font-medium text-gray-600 mb-2">Email</p>
+                <p class="text-lg font-semibold text-gray-900">@ViewBag.Email</p>
+            </div>
+
+            <!-- Role Card -->
+            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                <p class="text-sm font-medium text-gray-600 mb-2">Role</p>
+                <p class="text-lg font-semibold text-gray-900">@ViewBag.Role</p>
+            </div>
+
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-12 max-w-2xl">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Quick actions</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <a href="@Url.Action("Home", "UserMenu")"
+                   class="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-100 transition-colors group">
+                    <p class="font-medium text-gray-900 group-hover:text-gray-600">Menu</p>
+                    <p class="text-sm text-gray-500 mt-1">View today's menu</p>
+                </a>
+
+                <a href="@Url.Action("Index", "UserBill")"
+                   class="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-100 transition-colors group">
+                    <p class="font-medium text-gray-900 group-hover:text-gray-600">Bills</p>
+                    <p class="text-sm text-gray-500 mt-1">View your bills</p>
+                </a>
+
+                <a href="@Url.Action("AttendanceHistory", "UserMenu")"
+                   class="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-100 transition-colors group">
+                    <p class="font-medium text-gray-900 group-hover:text-gray-600">Attendance</p>
+                    <p class="text-sm text-gray-500 mt-1">Check your attendance</p>
+                </a>
+
+                <a href="@Url.Action("Dashboard", "Admin")"
+                   class="p-4 bg-gray-50 border border-gray-200 rounded-lg hover:border-gray-300 hover:bg-gray-100 transition-colors group">
+                    <p class="font-medium text-gray-900 group-hover:text-gray-600">Settings</p>
+                    <p class="text-sm text-gray-500 mt-1">Manage account</p>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

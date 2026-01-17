@@ -1,0 +1,150 @@
+﻿@model List<Attendance>
+
+@{
+    ViewBag.Title = "My Attendance History";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+
+    <partial name="_TopNavbar" />
+    <partial name="_SideDrawer" />
+
+    <!-- Main Container with proper navbar padding -->
+    <div class="pt-16">
+
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900">
+                            My Attendance History
+                        </h1>
+                        <p class="text-gray-600 mt-2 text-lg">View all your attendance records marked by the admin</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto p-8">
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Total Days</p>
+                                <p class="text-2xl font-semibold mt-1 text-gray-900">@ViewBag.TotalDays</p>
+                            </div>
+                            <svg class="w-10 h-10 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v2h16V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5H4v8a2 2 0 002 2h12a2 2 0 002-2V7h-2v1a1 1 0 11-2 0V7H9v1a1 1 0 11-2 0V7H6v1a1 1 0 11-2 0V7z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Food Days</p>
+                                <p class="text-2xl font-semibold mt-1 text-gray-900">@ViewBag.FoodDays</p>
+                            </div>
+                            <svg class="w-10 h-10 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 2a3 3 0 00-3 3v1H5a3 3 0 00-3 3v8a3 3 0 003 3h10a3 3 0 003-3v-8a3 3 0 00-3-3h-2V5a3 3 0 00-3-3zm0 2a1 1 0 011 1v1H9V5a1 1 0 011-1zm3 5a1 1 0 100-2 1 1 0 000 2zm-6 0a1 1 0 100-2 1 1 0 000 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">Drink Days</p>
+                                <p class="text-2xl font-semibold mt-1 text-gray-900">@ViewBag.DrinkDays</p>
+                            </div>
+                            <svg class="w-10 h-10 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M4.5 2a1.5 1.5 0 00-1.5 1.5v2c0 1.294.834 2.403 2 2.816V16.5a1.5 1.5 0 003 0V8.316c1.166-.413 2-1.522 2-2.816v-2A1.5 1.5 0 005.5 2h-1zm6 0a1.5 1.5 0 00-1.5 1.5v2c0 1.294.834 2.403 2 2.816V16.5a1.5 1.5 0 003 0V8.316c1.166-.413 2-1.522 2-2.816v-2A1.5 1.5 0 0011.5 2h-1z"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-600 text-sm font-medium">This Month</p>
+                                <p class="text-2xl font-semibold mt-1 text-gray-900">@ViewBag.ThisMonthDays</p>
+                            </div>
+                            <svg class="w-10 h-10 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Attendance Table or Empty State -->
+                @if (Model.Count == 0)
+                {
+                    <div class="bg-white rounded-lg p-8 text-center border border-gray-200 shadow-sm">
+                        <i class="fas fa-calendar-times text-3xl text-gray-300 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-gray-700 mb-2">No Attendance Records</h3>
+                        <p class="text-gray-600 text-sm">Your attendance will appear here once marked by the admin</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Date</th>
+                                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">Item</th>
+                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Type</th>
+                                        <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase">Price</th>
+                                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-600 uppercase">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 text-sm">
+                                    @foreach (var attendance in Model)
+                                    {
+                                        <tr class="hover:bg-gray-50 transition-all duration-200">
+                                            <td class="px-4 py-3 text-gray-700">
+                                                @attendance.Menu.Date.ToString("MMM dd")
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <div class="flex items-center gap-2">
+                                                    <i class="@(attendance.Menu.IsFood ? "fas fa-hamburger" : "fas fa-mug-hot") text-gray-600"></i>
+                                                    <span class="font-medium text-gray-900">@attendance.Menu.Name</span>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium @(attendance.Menu.IsFood ? "bg-amber-100 text-amber-800" : "bg-green-100 text-green-800")">
+                                                    @(attendance.Menu.IsFood ? "Food" : "Drink")
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 text-right font-medium text-gray-900">
+                                                Rs @attendance.Menu.Price.ToString("N2")
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                                    <i class="fas fa-check mr-1"></i> Attended
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                }
+
+    </div>
+
+</body>
+</html>

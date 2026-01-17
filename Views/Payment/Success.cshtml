@@ -1,0 +1,88 @@
+﻿@{
+    ViewBag.Title = "Payment Success";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/styles.css" />
+    <title>Payment Successful</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-white flex items-center justify-center" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+
+    <div class="w-full max-w-md px-6">
+        
+        <!-- Success Container -->
+        <div class="text-center">
+            <!-- Success Icon -->
+            <div class="mb-8 flex justify-center">
+                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center">
+                    <svg class="w-10 h-10 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <h1 class="text-3xl font-semibold text-gray-900 mb-2">Payment successful</h1>
+            <p class="text-gray-500 text-sm mb-8">Your payment has been processed successfully.</p>
+
+            <!-- Payment Details -->
+            <div class="bg-gray-50 rounded-lg p-6 mb-8 text-left">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-gray-600 text-sm font-medium">Amount paid</span>
+                    <span class="text-2xl font-semibold text-gray-900">
+                        @ViewBag.Currency @ViewBag.AmountPaid.ToString("N2")
+                    </span>
+                </div>
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                    <span>Transaction ID</span>
+                    <span class="font-mono">@ViewBag.SessionId?.Substring(0, 20)...</span>
+                </div>
+            </div>
+
+            <!-- What's Next -->
+            <div class="mb-8 text-left">
+                <p class="text-sm font-medium text-gray-900 mb-4">What happens next</p>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-gray-600 text-xs">Your bill is marked as paid</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-gray-600 text-xs">Confirmation email sent to your inbox</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-gray-600 text-xs">Download invoice from bill history</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col gap-3">
+                <a href="@Url.Action("Index", "UserBill")"
+                   class="inline-flex items-center justify-center px-4 py-3 bg-gray-900 text-white rounded-lg font-medium text-sm hover:bg-black transition-colors">
+                    View bills
+                </a>
+
+                <a href="@Url.Action("Home", "UserMenu")"
+                   class="inline-flex items-center justify-center px-4 py-3 bg-gray-100 text-gray-900 rounded-lg font-medium text-sm hover:bg-gray-200 transition-colors">
+                    Go to home
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

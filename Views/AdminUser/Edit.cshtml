@@ -1,0 +1,203 @@
+﻿@model User
+
+@{
+    ViewBag.Title = "Edit User";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-white text-gray-900 min-h-screen">
+
+    <partial name="_TopNavbar" />
+    <partial name="_SideDrawer" />
+
+    <!-- Main Container -->
+    <div class="pt-16">
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- Header -->
+            <header class="bg-white border-b border-gray-200 px-8 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-4xl font-extrabold text-gray-900">
+                            Edit User
+                        </h1>
+                        <p class="text-gray-600 mt-2 text-lg">Update user details and preferences</p>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Form Area -->
+            <main class="flex-1 overflow-y-auto p-8">
+                <div class="max-w-3xl mx-auto">
+
+                    <!-- Error Message -->
+                    @if (ViewBag.Error != null)
+                    {
+                        <div class="mb-8 p-6 bg-gradient-to-r bg-red-50 border border-red-500/30 rounded-lg flex items-center shadow-sm">
+                            <i class="fas fa-exclamation-circle text-red-400 text-4xl mr-6"></i>
+                            <span class="text-red-200 text-xl font-medium">@ViewBag.Error</span>
+                        </div>
+                    }
+
+                    <!-- Form Card -->
+                    <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-200">
+
+                        <form id="editUserForm" method="post" asp-action="Edit" class="space-y-8">
+
+                            <!-- Hidden Fields -->
+                            <input type="hidden" name="Id" value="@Model.Id" />
+                            <input type="hidden" name="PasswordHash" value="@Model.PasswordHash" />
+
+                            <!-- Full Name -->
+                            <div>
+                                <label for="fullName" class="block text-lg font-semibold text-gray-600 mb-3">
+                                    Full Name <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-user text-xl text-gray-700"></i>
+                                    </div>
+                                    <input type="text" id="fullName" name="FullName" value="@Model.FullName" placeholder="Enter full name"
+                                           class="w-full bg-white border border-gray-200 rounded-md pl-10 pr-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition">
+                                </div>
+                                <span id="fullNameError" class="text-red-600 text-sm mt-2 hidden"></span>
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label for="email" class="block text-lg font-semibold text-gray-600 mb-3">
+                                    Email Address <span class="text-red-400">*</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-envelope text-xl text-gray-700"></i>
+                                    </div>
+                                    <input type="email" id="email" name="Email" value="@Model.Email" placeholder="Enter email address"
+                                           class="w-full bg-white border border-gray-200 rounded-md pl-10 pr-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition">
+                                </div>
+                                <span id="emailError" class="text-red-600 text-sm mt-2 hidden"></span>
+                            </div>
+
+                            <!-- New Password -->
+                            <div>
+                                <label for="newPassword" class="block text-lg font-semibold text-gray-600 mb-3">
+                                    New Password <span class="text-gray-600 text-sm">(Leave blank to keep current)</span>
+                                </label>
+                                <div class="relative">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-lock text-xl text-gray-700"></i>
+                                    </div>
+                                    <input type="password" id="newPassword" name="NewPassword" placeholder="Enter new password (min 6 characters)"
+                                           class="w-full bg-white border border-gray-200 rounded-md pl-10 pr-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition">
+                                </div>
+                                <span id="newPasswordError" class="text-red-600 text-sm mt-2 hidden"></span>
+                            </div>
+
+                            <!-- Role Selection -->
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-600 mb-4">
+                                    User Role <span class="text-red-400">*</span>
+                                </label>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <label class="flex items-center space-x-4 cursor-pointer p-4 bg-white rounded-md border border-gray-200 hover:shadow-sm transition @(Model.Role.ToLower() == "admin" ? "ring-2 ring-rose-200" : "")">
+                                        <input type="radio" name="Role" value="Admin" @(Model.Role.ToLower() == "admin" ? "checked" : "")
+                                               class="w-5 h-5 text-cyan-500 border-gray-300 focus:ring-cyan-500">
+                                        <div>
+                                            <p class="text-xl font-medium text-gray-900">Admin</p>
+                                            <p class="text-sm text-gray-600 mt-1">Full access to management panel</p>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center space-x-4 cursor-pointer p-4 bg-white rounded-md border border-gray-200 hover:shadow-sm transition @(Model.Role.ToLower() == "user" ? "ring-2 ring-cyan-200" : "")">
+                                        <input type="radio" name="Role" value="User" @(Model.Role.ToLower() == "user" ? "checked" : "")
+                                               class="w-5 h-5 text-cyan-500 border-gray-300 focus:ring-cyan-500">
+                                        <div>
+                                            <p class="text-xl font-medium text-gray-900">Regular User</p>
+                                            <p class="text-sm text-gray-600 mt-1">Standard mess member access</p>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Meal Preferences -->
+                            <div>
+                                <label class="block text-lg font-semibold text-gray-600 mb-4">
+                                    Meal Preferences
+                                </label>
+                                <div class="space-y-6">
+                                    <label class="flex items-center space-x-5 cursor-pointer p-4 bg-white rounded-md border border-gray-200 hover:shadow-sm transition">
+                                        <input type="checkbox" name="Drink" @(Model.Drink ? "checked" : "")
+                                               class="w-6 h-6 text-emerald-500 border-gray-300 rounded focus:ring-emerald-500">
+                                        <div class="flex-1">
+                                            <p class="text-xl font-medium text-gray-900">Drink</p>
+                                            <p class="text-sm text-gray-600 mt-1">Mandatory – Always billed daily</p>
+                                        </div>
+                                        <i class="fas fa-mug-hot text-4xl text-gray-400"></i>
+                                    </label>
+
+                                    <label class="flex items-center space-x-5 cursor-pointer p-4 bg-white rounded-md border border-gray-200 hover:shadow-sm transition">
+                                        <input type="checkbox" name="Lunch" @(Model.Lunch ? "checked" : "")
+                                               class="w-6 h-6 text-amber-500 border-gray-300 rounded focus:ring-amber-500">
+                                        <div class="flex-1">
+                                            <p class="text-xl font-medium text-gray-900">Lunch</p>
+                                            <p class="text-sm text-gray-600 mt-1">Optional – Billed only if attended</p>
+                                        </div>
+                                        <i class="fas fa-utensils text-4xl text-gray-400"></i>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="flex space-x-6 pt-8">
+                                <button type="submit"
+                                        class="flex-1 bg-green-600 text-white py-5 rounded-lg font-bold text-xl hover:bg-green-700 transition-all duration-300 shadow-sm flex items-center justify-center">
+                                    <i class="fas fa-save mr-3"></i>
+                                    Update User
+                                </button>
+
+                                <a href="/AdminUser/Index"
+                                   class="flex-1 bg-gray-700/50 text-gray-700 py-5 rounded-lg font-bold text-xl hover:bg-gray-600/50 transition flex items-center justify-center border border-gray-600/50">
+                                    <i class="fas fa-arrow-left mr-3"></i>
+                                    Cancel
+                                </a>
+                            </div>
+
+                        </form>
+
+                    </div>
+                </div>
+            </main>
+        </div>
+
+    <!-- Client-Side Validation (Assuming you have a separate JS file or inline) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="~/js/editUserValidation.js"></script>
+
+</body>
+</html>
