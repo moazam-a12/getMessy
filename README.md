@@ -153,13 +153,9 @@ The application uses **Microsoft SQL Server** with Entity Framework Core for dat
 
 See `MSSQL_DATABASE_SETUP.sql` for complete schema.
 
-## 📚 API Documentation
-
-Refer to `API_Documentation.md` for detailed API endpoints and usage.
-
 ## 🚢 Deployment
 
-Deployment guides are available in `DEPLOYMENT.md`. The application can be deployed to:
+The application can be deployed to:
 - Azure App Service
 - AWS Elastic Beanstalk
 - IIS (Windows Server)
@@ -203,18 +199,4 @@ This project is created for educational purposes as part of a university project
 
 ## 👨‍💻 Authors
 
-- University Project - Enterprise and Application Development
-- UET - Semester 7
-
-## 🐛 Known Issues
-
-- Vendor libraries in `wwwroot/lib/` must be restored via npm/libman
-- First-time setup requires manual database initialization
-
-## 📞 Support
-
-For issues and questions, please open an issue in the GitHub repository.
-
----
-
-**Happy Coding! 🎉**
+- Yours only, MA
